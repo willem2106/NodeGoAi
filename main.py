@@ -101,26 +101,13 @@ if info.status_code == 200:
     user_info.add_row("📧 Email", data["metadata"]["email"])
     user_info.add_row("🎭 Role", data["metadata"]["userRole"])
     user_info.add_row("🔗 Referral Code", data["metadata"]["refCode"])
-    user_info.add_row("🔄 Referred By", data["metadata"]["refBy"])
+    if data['metadata'].get('refBy'):
+        user_info.add_row("🔄 Referred By", data["metadata"]["refBy"])
     user_info.add_row("✅ Verified", "Yes ✅" if data["metadata"]["isVerified"] else "No ❌")
     user_info.add_row("🕒 Account Created", format_time(data["metadata"]["createdAt"]))
     user_info.add_row("💰 Total Points", f"{total_points:.6f} 🌟")  # Tambahkan total point
 
     rprint(user_info)
-
-    # Info Node
-    for node in data["metadata"]["nodes"]:
-        node_info = Table(title="🖥️ Node Info")
-        node_info.add_column("Field", style="bold cyan")
-        node_info.add_column("Value", style="bold white")
-        node_info.add_row("🌍 IP Address", node["id"])
-        node_info.add_row("🔋 Active", "Yes ✅" if node["isActive"] else "No ❌")
-        node_info.add_row("📊 Total Points", f"{node['totalPoint']:.6f} 🌟")
-        node_info.add_row("📅 Today's Points", f"{node['todayPoint']:.6f} ⭐")
-        node_info.add_row("🕒 Last Connected", format_time(node["lastConnectedAt"]))
-        node_info.add_row("⏳ Uptime (sec)", f"{node['totalUptime']:.2f} ⏲️")
-        node_info.add_row("🌎 Country", node["countryCode"])
-        rprint(node_info)
     print("\033[96m🌐 Memulai ping ke server...\033[0m")
     headers = {
         "Host": "nodego.ai",
