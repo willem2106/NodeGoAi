@@ -85,6 +85,9 @@ if info.status_code == 200:
         return datetime.fromisoformat(timestamp.replace("Z", "")).strftime("%Y-%m-%d %H:%M:%S")
 
     # Header Status
+    total_points = sum(node["totalPoint"] for node in data["metadata"]["nodes"])
+
+    # Status Response
     status = data["statusCode"]
     status_msg = "[bold green]✅ SUCCESS[/]" if status == 200 else "[bold red]❌ ERROR[/]"
     rprint(Panel(f"Status Code: {status} {status_msg}", title="📢 [bold cyan]Server Response[/]", expand=False))
@@ -101,23 +104,23 @@ if info.status_code == 200:
     user_info.add_row("🔄 Referred By", data["metadata"]["refBy"])
     user_info.add_row("✅ Verified", "Yes ✅" if data["metadata"]["isVerified"] else "No ❌")
     user_info.add_row("🕒 Account Created", format_time(data["metadata"]["createdAt"]))
+    user_info.add_row("💰 Total Points", f"{total_points:.6f} 🌟")  # Tambahkan total point
 
     rprint(user_info)
 
     # Info Node
-    node = data["metadata"]["nodes"][0]  # Ambil data node pertama
-    node_info = Table(title="🖥️ Node Info")
-    node_info.add_column("Field", style="bold cyan")
-    node_info.add_column("Value", style="bold white")
-    node_info.add_row("🌍 IP Address", node["id"])
-    node_info.add_row("🔋 Active", "Yes ✅" if node["isActive"] else "No ❌")
-    node_info.add_row("📊 Total Points", f"{node['totalPoint']:.6f} 🌟")
-    node_info.add_row("📅 Today's Points", f"{node['todayPoint']:.6f} ⭐")
-    node_info.add_row("🕒 Last Connected", format_time(node["lastConnectedAt"]))
-    node_info.add_row("⏳ Uptime (sec)", f"{node['totalUptime']:.2f} ⏲️")
-    node_info.add_row("🌎 Country", node["countryCode"])
-
-    rprint(node_info)
+    for node in data["metadata"]["nodes"]:
+        node_info = Table(title="🖥️ Node Info")
+        node_info.add_column("Field", style="bold cyan")
+        node_info.add_column("Value", style="bold white")
+        node_info.add_row("🌍 IP Address", node["id"])
+        node_info.add_row("🔋 Active", "Yes ✅" if node["isActive"] else "No ❌")
+        node_info.add_row("📊 Total Points", f"{node['totalPoint']:.6f} 🌟")
+        node_info.add_row("📅 Today's Points", f"{node['todayPoint']:.6f} ⭐")
+        node_info.add_row("🕒 Last Connected", format_time(node["lastConnectedAt"]))
+        node_info.add_row("⏳ Uptime (sec)", f"{node['totalUptime']:.2f} ⏲️")
+        node_info.add_row("🌎 Country", node["countryCode"])
+        rprint(node_info)
     print("\033[96m🌐 Memulai ping ke server...\033[0m")
     headers = {
         "Host": "nodego.ai",
